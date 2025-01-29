@@ -5,8 +5,17 @@ import uvicorn
 import torch
 import torch.nn as nn
 
+from fastapi.middleware.cors import CORSMiddleware
+
 # Initialize FastAPI app
 app = FastAPI(title="Fake Stuttering Detection API", description="A mock API for detecting stuttering types from audio files. 😄")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins (update for production)
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Define stuttering types
 STUTTERING_TYPES = ["Prolongation", "Block", "SoundRep", "WordRep", "Interjection"]
@@ -72,7 +81,7 @@ async def detect_stuttering(audio_file: UploadFile = File(...)):
     response = {
         "filename": audio_file.filename,
         "detected_stuttering_types": detected_types,
-        "message": "🎉 Done! Remember, these predictions are completely random. 😄"
+        "message": "🎉 Done! Remember, the detections could be biased!! 😄"
     }
     return response
 
