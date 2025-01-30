@@ -8,7 +8,12 @@ function App() {
 
   // Handle file input change
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
+    const selectedFile = e.target.files[0];
+    if (selectedFile && selectedFile.type.startsWith("audio/")) {
+      setFile(selectedFile);
+    } else {
+      alert("Please upload a valid audio file!");
+    }
   };
 
   // Handle form submission
@@ -47,8 +52,8 @@ function App() {
 
   return (
     <div style={styles.container}>
-      <h1>Phonic Forge🎤</h1>
-      <p>Upload an audio file to detect stuttering types (Upto 5 supported).</p>
+      <h1>Stuttering Detection and Therapy Suggestions 🎤</h1>
+      <p>Upload an audio file to detect stuttering types and get therapy suggestions.</p>
 
       <form onSubmit={handleSubmit} style={styles.form}>
         <input type="file" accept="audio/*" onChange={handleFileChange} style={styles.fileInput} />
@@ -60,11 +65,14 @@ function App() {
       {result && (
         <div style={styles.result}>
           <h2>Results for: {result.filename}</h2>
+          <h3>Detected Stuttering Types:</h3>
           <ul>
             {result.detected_stuttering_types.map((type, index) => (
               <li key={index}>{type}</li>
             ))}
           </ul>
+          <h3>Speech Therapy Suggestions:</h3>
+          <p>{result.therapy_suggestions}</p>
           <p>{result.message}</p>
         </div>
       )}
@@ -75,11 +83,16 @@ function App() {
 // Basic styles
 const styles = {
   container: {
-    maxWidth: "600px",
-    margin: "0 auto",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: "100vh",
+    margin: "0",
     padding: "20px",
     textAlign: "center",
-    color: "black"
+    color: "black",
+    backgroundColor: "#f0f0f0",
   },
   form: {
     margin: "20px 0",
@@ -103,5 +116,7 @@ const styles = {
     backgroundColor: "#f9f9f9",
   },
 };
+
+
 
 export default App;

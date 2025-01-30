@@ -90,6 +90,7 @@
 #     uvicorn.run(app, host="0.0.0.0", port=8000)
 
 from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 import numpy as np
 from typing import List
 import uvicorn
@@ -97,6 +98,13 @@ import google.generativeai as genai
 
 # Initialize FastAPI app
 app = FastAPI(title="Stuttering Detection API", description="API for detecting stuttering types and providing speech therapy suggestions. 😄")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins (update for production)
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Define stuttering types
 STUTTERING_TYPES = ["Prolongation", "Block", "SoundRep", "WordRep", "Interjection"]
