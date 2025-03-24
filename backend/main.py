@@ -70,7 +70,7 @@ async def detect_stuttering(audio_file: UploadFile = File(...)):
 
     # Pretend to save the file (but actually do nothing)
     print(f"🔊 Processing audio file: {audio_file.filename}...")
-    print("🤖 Extracting fake features from the audio...")
+    print("🤖 Extracting from the audio...")
 
     # Get fake predictions
     detected_types = predict_stuttering_type(audio_file.filename)
