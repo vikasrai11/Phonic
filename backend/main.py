@@ -19,9 +19,9 @@ app.add_middleware(
 STUTTERING_TYPES = ["Prolongation", "Block", "SoundRep", "WordRep", "Interjection"]
 
 # Configure Gemini API
-GEMINI_API = "AIzaSyDfPoNzsJJ1kvNh88ape_36KEfgcoRPSkU"  # Replace with your Gemini API key
+GEMINI_API = "AIzaSyBa3u5k6ZmL0wa8k0oAHoesMeuWyl0Zdh8"  # Replace with your Gemini API key
 genai.configure(api_key=GEMINI_API)
-model = genai.GenerativeModel('gemini-pro')  # Use the Gemini Pro model
+model = genai.GenerativeModel('gemini-2.0-flash')  # Use the Gemini Pro model
 
 # Function to generate speech therapy suggestions using Gemini API
 def generate_speech_therapy(detected_types: List[str]) -> str:
