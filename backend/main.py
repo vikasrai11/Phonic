@@ -34,13 +34,13 @@ def generate_speech_therapy(detected_types: List[str]) -> str:
     # Create a prompt for Gemini
     prompt = (
         f"Provide speech therapy suggestions for the following stuttering types: {', '.join(detected_types)}. "
-        "Keep the suggestions concise and practical."
+        "Format the response with proper line breaks and readability."
     )
 
     # Call the Gemini API
     try:
         response = model.generate_content(prompt)
-        return response.text
+        return response.text.replace("\n", "\n\n")  # Ensure line breaks for readability
     except Exception as e:
         print(f"Error calling Gemini API: {e}")
         return "Unable to generate therapy suggestions at the moment."

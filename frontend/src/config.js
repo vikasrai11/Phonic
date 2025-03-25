@@ -1,6 +1,25 @@
-import {PinataSDK} from "pinata";
+import axios from "axios";
 
-export const pinata = new PinataSDK({
-    pinataJwt: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiI1NGEzNjJkZC01NzYyLTRlYTYtOGZjNy04NjEzMWFlZjhjNDAiLCJlbWFpbCI6ImlpaW5ub2NlbnRkZXZpbGxsQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6IkZSQTEifSx7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6Ik5ZQzEifV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiI1MmVkMzkyNTc4ODk4ZWZkM2NkOCIsInNjb3BlZEtleVNlY3JldCI6Ijc5NWY0NDA2YmM0MzVhZWU4ODQ1MWMxNTQwYjc3MzVjMTM1YzBkYjllYzM5MzIyMWFiOTU4ZmRhZjVjYWY0ZTciLCJleHAiOjE3NzI5NDc3NDV9.sNkQsYvSZa73To7cjz_b4cj6lbIRBeZcQ0527DKSoLA`,
-    pinataGateway: `violet-additional-primate-916.mypinata.cloud`
-})
+// Pinata API Credentials (Replace with your actual keys)
+const PINATA_API_KEY = "f8635393d49880a6cabb";
+const PINATA_SECRET_API_KEY = "ceae77498c5502b21464e050cd6c2af36f1dfe5538b0db0cd62e1e820362c1ab";
+
+export const uploadToPinata = async (file) => {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        pinata_api_key: PINATA_API_KEY,
+        pinata_secret_api_key: PINATA_SECRET_API_KEY,
+      },
+    });
+
+    return response.data; // Should contain IpfsHash
+  } catch (error) {
+    console.error("Error uploading to Pinata:", error);
+    throw error;
+  }
+};

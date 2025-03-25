@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { uploadToPinata } from "./config";
+import { ClipboardCopy, Check } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 
 function App() {
   const [file, setFile] = useState(null);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [ipfsHash, setIpfsHash] = useState("");
+  const [copied, setCopied] = useState(false);
 
-  // Handle file input change
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile && selectedFile.type.startsWith("audio/")) {
@@ -16,7 +20,16 @@ function App() {
     }
   };
 
-  // Handle form submission
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(ipfsHash);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    } catch (err) {
+      console.error("Failed to copy IPFS Hash:", err);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!file) {
@@ -25,22 +38,23 @@ function App() {
     }
 
     setLoading(true);
-    const formData = new FormData();
-    formData.append("audio_file", file);
 
     try {
-      // Send the file to the FastAPI backend
+      const pinataResponse = await uploadToPinata(file);
+      const ipfsHash = pinataResponse.IpfsHash;
+      setIpfsHash(ipfsHash);
+      console.log("Uploaded to IPFS:", ipfsHash);
+
+      const formData = new FormData();
+      formData.append("audio_file", file);
+      formData.append("ipfs_hash", ipfsHash);
+
       const response = await axios.post(
         "http://localhost:8000/detect-stuttering/",
         formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
 
-      // Set the result
       setResult(response.data);
     } catch (error) {
       console.error("Error uploading file:", error);
@@ -52,11 +66,14 @@ function App() {
 
   return (
     <div style={styles.container}>
-      <h1>Stuttering Detection and Therapy Suggestions 🎤</h1>
+      <h1>Phonic Forge</h1>
+      <h2>Real-Time Stuttering Detection and Personalized Therapy 🎤</h2>
       <p>Upload an audio file to detect stuttering types and get therapy suggestions.</p>
 
       <form onSubmit={handleSubmit} style={styles.form}>
-        <input type="file" accept="audio/*" onChange={handleFileChange} style={styles.fileInput} />
+        <div style={styles.inputContainer}>
+          <input type="file" accept="audio/*" onChange={handleFileChange} style={styles.inputField} />
+        </div>
         <button type="submit" disabled={loading} style={styles.button}>
           {loading ? "Processing..." : "Upload and Detect"}
         </button>
@@ -72,15 +89,25 @@ function App() {
             ))}
           </ul>
           <h3>Speech Therapy Suggestions:</h3>
-          <p>{result.therapy_suggestions}</p>
+          <ReactMarkdown>{result.therapy_suggestions}</ReactMarkdown>
           <p>{result.message}</p>
+        </div>
+      )}
+
+      {ipfsHash && (
+        <div style={styles.ipfsSection}>
+          <p>
+            <strong>IPFS Hash:</strong> {ipfsHash}
+          </p>
+          <button onClick={handleCopy} className="p-1 hover:bg-gray-200 rounded">
+            {copied ? <Check size={16} color="green" /> : <ClipboardCopy size={16} />}
+          </button>
         </div>
       )}
     </div>
   );
 }
 
-// Basic styles
 const styles = {
   container: {
     display: "flex",
@@ -88,17 +115,34 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     minHeight: "100vh",
-    margin: "0",
     padding: "20px",
     textAlign: "center",
-    color: "black",
-    backgroundColor: "#f0f0f0",
+    color: "#333",
+    backgroundColor: "#f4f4f4",
   },
   form: {
-    margin: "20px 0",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: "1rem",
+    marginTop: "20px",
   },
-  fileInput: {
-    margin: "10px 0",
+  inputContainer: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    border: "1px solid #ccc",
+    borderRadius: "5px",
+    padding: "8px 10px",
+    backgroundColor: "#fff",
+    width: "100%",
+    maxWidth: "300px",
+  },
+  inputField: {
+    border: "none",
+    outline: "none",
+    width: "100%",
+    fontSize: "1em",
   },
   button: {
     padding: "10px 20px",
@@ -107,6 +151,7 @@ const styles = {
     border: "none",
     borderRadius: "5px",
     cursor: "pointer",
+    transition: "all 0.3s ease",
   },
   result: {
     marginTop: "20px",
@@ -114,9 +159,16 @@ const styles = {
     border: "1px solid #ddd",
     borderRadius: "5px",
     backgroundColor: "#f9f9f9",
+    width: "90%",
+    maxWidth: "800px",
+    textAlign: "left",
+  },
+  ipfsSection: {
+    marginTop: "20px",
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
   },
 };
-
-
 
 export default App;

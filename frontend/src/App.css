@@ -17,6 +17,11 @@
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
+.justify-text {
+  text-align: justify;
+  white-space: pre-line; /* Preserves line breaks from API response */
+}
+
 
 @keyframes logo-spin {
   from {
