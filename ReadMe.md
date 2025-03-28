@@ -66,10 +66,8 @@ foundryup
 anvil
 ```
 
-```
 RPC URL- http://127.0.0.1:8545.
 default chain ID - 31337.
 Install and setup metamask in browser.
 Add anvil network into metamask.
 Import anvil account into metamask.
-```
