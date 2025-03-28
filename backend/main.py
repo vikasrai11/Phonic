@@ -76,8 +76,11 @@ async def detect_stuttering(audio_file: UploadFile = File(...)):
     detected_types = predict_stuttering_type(audio_file.filename)
 
     # Generate speech therapy suggestions using Gemini API
-    therapy_suggestions = generate_speech_therapy(detected_types)
-
+    therapy_suggestions_text = generate_speech_therapy(detected_types)
+    therapy_suggestions = []
+    for stutter in detected_types:
+        suggestions_list = [line.strip() for line in therapy_suggestions_text.split("\n") if line.strip()]
+        therapy_suggestions.append({"type": stutter, "suggestions": suggestions_list})
     # Prepare the response
     response = {
         "filename": audio_file.filename,
