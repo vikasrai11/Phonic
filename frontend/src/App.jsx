@@ -1,15 +1,50 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import axios from "axios";
 import { uploadToPinata } from "./config";
-import { Bot, Upload, AudioWaveform as Waveform, Sparkles, Loader2 } from "lucide-react";
+import { Bot, Upload, AudioWaveform as Waveform, Sparkles, Blocks,Loader2,HeartPulse, Speech } from "lucide-react";
+
+
 
 function App() {
   const [file, setFile] = useState(null);
   const [userName, setUserName] = useState("");
   const [result, setResult] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [resultUrl, setResultUrl] = useState("");
+  const [text, setText] = useState('');
+  const fullText = 'Welcome to Phonic Forge';
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
+
+  useEffect(() => {
+    // Preload the Spline design
+    const preloadIframe = document.createElement('iframe');
+    preloadIframe.src = 'https://my.spline.design/springstatesloadingscreen-c53ed022e56447e248dd2051a018b8d2/';
+    preloadIframe.style.display = 'none';
+    document.body.appendChild(preloadIframe);
+
+    let currentIndex = 0;
+    const typingInterval = setInterval(() => {
+      if (currentIndex <= fullText.length) {
+        setText(fullText.slice(0, currentIndex));
+        currentIndex++;
+      } else {
+        clearInterval(typingInterval);
+        setTimeout(() => {
+          setLoading(false);
+          setIsFirstLoad(false); 
+          document.body.removeChild(preloadIframe);
+        }, 800); // Reduced wait time
+      }
+    }, 80); // Faster typing speed
+
+    return () => {
+      clearInterval(typingInterval);
+      if (document.body.contains(preloadIframe)) {
+        document.body.removeChild(preloadIframe);
+      }
+    };
+  }, []);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -52,6 +87,40 @@ function App() {
       setIsAnalyzing(false);
     }
   };
+  if (loading && isFirstLoad) {
+    return (
+      <div className="fixed inset-0 w-full h-full flex flex-col items-center justify-center bg-white">
+        <div className="absolute inset-0 w-full h-full z-0">
+          <iframe 
+            src="https://my.spline.design/springstatesloadingscreen-c53ed022e56447e248dd2051a018b8d2/"
+            className="w-full h-full"
+            style={{ border: 'none' }}
+          />
+        </div>
+        <div className="relative z-10 text-center">
+          <h1 
+            className="text-4xl md:text-6xl font-bold text-black mb-4 tracking-wider"
+            style={{
+              fontFamily: "'Orbitron', sans-serif",
+              textShadow: '2px 2px 4px rgba(0,0,0,0.1)',
+              letterSpacing: '0.15em'
+            }}
+          >
+            {text}
+            <span className="animate-pulse">|</span>
+          </h1>
+          {/* <div className="flex items-center justify-center space-x-2 text-blue-600">
+              <Loader2 className="w-6 h-6 animate-spin" />
+              <span className="text-sm font-medium">Loading...</span>
+            </div> */}
+        </div>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+      </div>
+    );
+  }
 
   const handleOpenResultPage = () => {
     if (!result) return;
@@ -68,7 +137,7 @@ function App() {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stuttering Analysis Report</title>
+    <title>Stuttering Report</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
@@ -159,41 +228,31 @@ function App() {
     </style>
 </head>
 <body>
-    <div class="background-container">
-        <iframe src="https://my.spline.design/hypnotism-ffd40072e3487093b920613c8b5acf7d/" loading="lazy"></iframe>
-    </div>
+    // <div class="background-container">
+    //     <iframe src="https://my.spline.design/hypnotism-ffd40072e3487093b920613c8b5acf7d/"></iframe>
+    // </div>
     <div class="container" id="report-content">
         <h2>Stuttering Analysis Report for ${result.filename}</h2>
         <p><span class="section-title">Message:</span> ${result.message}</p>
         
         <p class="section-title">Detected Stuttering Types:</p>
-         <table>
-                    <tr><th>Stuttering Type</th></tr>
-                    ${detectedStutteringTypes.map(type => `<tr><td>${type}</td></tr>`).join("")}
-                </table>
-
+        <table>
+            <tr><th>Stuttering Type</th></tr>
+            ${detectedStutteringTypes.map(type => `<tr><td>${type}</td></tr>`).join("")}
+        </table>
         
         <p class="section-title">Speech Therapy Suggestions:</p>
-         <table>
-                    <tr><th>Stuttering Type</th><th>Suggestions</th></tr>
-                    ${therapySuggestions.map((therapy) => `
-                        <tr>
-                            <td>${therapy.type}</td>
-                            <td>
-                                <ul>
-                                     ${therapy.suggestions && therapy.suggestions.length > 0 
-                        ? therapy.suggestions.map((suggestion) => `<li>${suggestion}</li>`).join("") 
-                        : "<li>No suggestions available</li>"
-                    }
-                                </ul>
-                            </td>
-                        </tr>
-                    `).join("")}
-                </table>
+        <ul>
+    ${[...new Set(therapySuggestions.flatMap(therapy => therapy.suggestions || []))]
+        .map(suggestion => `<li>${suggestion.replace(/\*/g, "").trim()}</li>`)
+        .join("")}
+</ul>
+
+    
                 
 
         
-        <p class="footer">Generated by PhonicForge - AI & Blockchain-Powered Speech Analysis</p>
+        <p class="footer">Generated by PhonicForge </p>
     </div>
     <button class="download-btn" onclick="downloadPDF()">Download as PDF</button>
     <div style="height: 500px;"></div>
@@ -260,7 +319,7 @@ function App() {
                 </h1>
               </div>
               <p className="text-gray-300 max-w-2xl">
-                Advanced speech stuttering analysis powered by artificial intelligence and blockchain technology
+              A Platform for Real-Time Stuttering Detection and Personalized Therapy
               </p>
             </div>
 
@@ -290,8 +349,18 @@ function App() {
                 </div>
               </div>
 
-              <button type="submit" disabled={isAnalyzing} className="w-full py-3 px-6 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg font-medium transition-all">
-                {isAnalyzing ? "Analyzing..." : "Analyze Speech"}
+              <button
+                type="submit"
+                disabled={isAnalyzing}
+                className={`w-full py-3 px-6 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg font-medium transition-all flex items-center justify-center space-x-2 group backdrop-blur-sm
+                  ${isAnalyzing ? 'opacity-90' : 'hover:from-purple-700 hover:to-pink-700'}`}
+              >
+                <span>{isAnalyzing ? 'Analyzing...' : 'Analyze Speech'}</span>
+                {isAnalyzing ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <Sparkles className="w-5 h-5 group-hover:animate-pulse" />
+                )}
               </button>
             </form>
 
@@ -312,14 +381,14 @@ function App() {
               <p className="text-sm text-gray-300">Instant feedback on speech patterns</p>
             </div>
             <div className="p-4 bg-gray-800/30 rounded-lg backdrop-blur-sm border border-gray-700/50">
-              <Sparkles className="w-6 h-6 text-purple-400 mb-3" />
-              <h3 className="font-medium mb-2 text-white">Blockchain Secured</h3>
-              <p className="text-sm text-gray-300">Your data is encrypted and secure</p>
+              <Speech className="w-6 h-6 text-purple-400 mb-3" />
+              <h3 className="font-medium mb-2 text-white">Therapy Guidance</h3>
+              <p className="text-sm text-gray-300">Personalized speech therapy exercises and techniques</p>
             </div>
           </div>
-          <div className="w-full h-[200px] mt-12">
+          {/* <div className="w-full h-[200px] mt-12">
           <iframe src="https://my.spline.design/blockchain-bdaec85170f0b268ccb607d0d926302d/" className="w-full h-full" style={{ border: "none" }} />
-        </div>
+        </div> */}
           </div>
         </div>
       </div>

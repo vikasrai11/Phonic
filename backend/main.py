@@ -33,8 +33,26 @@ def generate_speech_therapy(detected_types: List[str]) -> str:
 
     # Create a prompt for Gemini
     prompt = (
-        f"Provide speech therapy suggestions for the following stuttering types: {', '.join(detected_types)}. "
-        "Format the response with proper line breaks and readability."
+        "You are an experienced Speech-Language Pathologist (SLP) and an expert in diagnosing and treating stuttering disorders. "
+        "Your task is to provide **precise, structured, and evidence-based speech therapy suggestions** "
+        f"for the following stuttering types: {', '.join(detected_types)}. "
+        "Your response should be **professionally structured**, well-organized, and directly applicable to therapy sessions.\n\n"
+
+        "### Formatting Guidelines:\n"
+        "1. **First, provide a brief explanation of each detected stuttering type** (causes, symptoms, and impact on speech fluency).\n"
+        "2. **After the explanation, provide structured therapy techniques**, categorized under:\n"
+        "   - **Fluency Shaping Techniques** (strategies to promote smooth speech)\n"
+        "   - **Stuttering Modification Techniques** (methods to reduce tension and gain control over speech blocks)\n"
+        "   - **Behavioral and Psychological Strategies** (ways to manage anxiety, confidence-building exercises)\n"
+        "   - **Assistive Technology (if applicable)** (devices or software that aid in fluency improvement)\n\n"
+        
+        "### Output Formatting:\n"
+        "1. **Use bold headings for each stuttering type**.\n"
+        "2. **Use bullet points for therapy techniques to enhance readability**.\n"
+        "3. **Do NOT include any introductory or concluding statements**—only provide explanations and therapy suggestions.\n"
+        "4. **Ensure proper line spacing for clarity and easy reading**.\n\n"
+
+        "Now, generate **concise and well-structured** therapy suggestions tailored to the detected stuttering types."
     )
 
     # Call the Gemini API
