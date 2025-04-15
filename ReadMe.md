@@ -33,7 +33,7 @@
 ### 📌 1️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/PhonicForge.git
+git clone https://github.com/vikasrai11/PhonicForge.git
 cd PhonicForge
 ```
 
