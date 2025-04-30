@@ -10,7 +10,7 @@ app = FastAPI(title="Stuttering Detection API", description="API for detecting s
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins (update for production)
+    allow_origins=["*"],  
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -19,9 +19,9 @@ app.add_middleware(
 STUTTERING_TYPES = ["Prolongation", "Block", "SoundRep", "WordRep", "Interjection"]
 
 # Configure Gemini API
-GEMINI_API = "AIzaSyBa3u5k6ZmL0wa8k0oAHoesMeuWyl0Zdh8"  # Replace with your Gemini API key
+GEMINI_API = "Replace with your Gemini API key"  
 genai.configure(api_key=GEMINI_API)
-model = genai.GenerativeModel('gemini-2.0-flash')  # Use the Gemini Pro model
+model = genai.GenerativeModel('gemini-2.0-flash') 
 
 # Function to generate speech therapy suggestions using Gemini API
 def generate_speech_therapy(detected_types: List[str]) -> str:
