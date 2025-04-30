@@ -5,6 +5,7 @@ contract IPFSStorage {
     mapping(string => string) private ipfsHashes;
     string[] private names;
     address private owner;
+    string private baseURL = "https://gateway.pinata.cloud/ipfs/";
 
     // Set the contract deployer as the owner
     constructor() {
@@ -18,21 +19,16 @@ contract IPFSStorage {
     }
 
     // Store the IPFS hash with a name (only owner can add)
-    function setIPFSHash(
-        string memory _name,
-        string memory _ipfsHash
-    ) public onlyOwner {
+    function setIPFSHash(string memory _name, string memory _ipfsHash) public onlyOwner {
         require(bytes(ipfsHashes[_name]).length == 0, "Name already exists");
         ipfsHashes[_name] = _ipfsHash;
         names.push(_name);
     }
 
-    // Retrieve the IPFS hash by name (only owner can retrieve)
-    function getIPFSHash(
-        string memory _name
-    ) public view onlyOwner returns (string memory) {
+    // Retrieve the full IPFS URL by name (only owner can retrieve)
+    function getIPFSHash(string memory _name) public view onlyOwner returns (string memory) {
         require(bytes(ipfsHashes[_name]).length != 0, "Name does not exist");
-        return ipfsHashes[_name];
+        return string(abi.encodePacked(baseURL, ipfsHashes[_name]));
     }
 
     // Get the total number of stored IPFS hashes (only owner can check)
