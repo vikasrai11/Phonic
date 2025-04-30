@@ -2,68 +2,12 @@ import axios from "axios";
 import { BrowserProvider, Contract } from "ethers"; 
 
 // Smart Contract details
-const CONTRACT_ADDRESS = "0x5fbdb2315678afecb367f032d93f642f64180aa3"; 
-const ABI = [
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_name",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_ipfsHash",
-				"type": "string"
-			}
-		],
-		"name": "setIPFSHash",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_name",
-				"type": "string"
-			}
-		],
-		"name": "getIPFSHash",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getIPFSHashCount",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	}
-]
+const CONTRACT_ADDRESS = "Replace with Deployed Contract Address"; 
+const ABI = "Replace with Deployed Contract ABI"
 
 // Pinata API Credentials
-const PINATA_API_KEY = "f8635393d49880a6cabb";
-const PINATA_SECRET_API_KEY = "ceae77498c5502b21464e050cd6c2af36f1dfe5538b0db0cd62e1e820362c1ab";
+const PINATA_API_KEY = "Replace with API key";
+const PINATA_SECRET_API_KEY = "Replace whith secret key";
 
 /**
  * Initialize provider & request wallet access
