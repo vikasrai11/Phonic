@@ -7,7 +7,7 @@ const ABI = "Replace with Deployed Contract ABI"
 
 // Pinata API Credentials
 const PINATA_API_KEY = "Replace with API key";
-const PINATA_SECRET_API_KEY = "Replace whith secret key";
+const PINATA_SECRET_API_KEY = "Replace with secret key";
 
 /**
  * Initialize provider & request wallet access
